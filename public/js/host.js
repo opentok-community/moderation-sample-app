@@ -122,6 +122,9 @@
       toggleMedia(publisher, this);
     });
 
+    document.getElementById('publishScreen').addEventListener('click', function () {
+      toggleScreen(this);
+    });
   };
 
   const setSubscriberEventListeners = function (session, subscriber) {
@@ -165,6 +168,7 @@
       '<div class="publisher-controls-container">',
       '<div id="publishVideo" title="Toggle Video" class="control video-control"></div>',
       '<div id="publishAudio" title="Toggle Audio" class="control audio-control"></div>',
+      '<div id="publishScreen" title="Toggle Screen-share" class="control screen-control"></div>',
       '</div>',
     ].join('\n');
     el.innerHTML = controls;
@@ -216,6 +220,55 @@
       }
     });
   };
+
+  let screenShare;
+
+  const toggleScreen = function () {
+    if (screenShare) {
+      stopScreenShare();
+    } else {
+      if (!subscribers.find(f => f.subscriber.stream.videoType === 'screen')) {
+        startScreenShare();
+      }
+    }
+  }
+
+  const startScreenShare = function () {
+    OT.checkScreenSharingCapability(function (response) {
+      if (!response.supported || response.extensionRegistered === false) {
+        // This browser does not support screen sharing.
+        alert("You can't do the do.");
+      } else {
+        // Screen sharing is available. Publish the screen.
+        const properties = Object.assign({ videoSource: 'screen', name: 'Host', insertMode: 'before' }, insertOptions);
+        screenShare = OT.initPublisher('screenPreview',
+          properties,
+          function (error) {
+            if (error) {
+              console.log(error);
+            } else {
+              session.publish(screenShare, function (error) {
+                if (error) {
+                  console.log(error);
+                } else {
+                  const subscriberData = {
+                    subscriber: screenShare
+                  };
+                  subscribers.push(subscriberData);
+                }
+              });
+            }
+          }
+        );
+      }
+    });
+  }
+
+  const stopScreenShare = function () {
+    subscribers = subscribers.filter(f => f.subscriber.streamId !== screenShare.stream.streamId)
+    screenShare.destroy();
+    screenShare = undefined;
+  }
 
   document.addEventListener('DOMContentLoaded', init);
 }());

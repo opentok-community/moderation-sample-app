@@ -17,7 +17,6 @@ const tokenOptions = (userType) => {
   const role = {
     host: 'moderator',
     guest: 'publisher',
-    viewer: 'subscriber',
   }[userType];
 
   return { role };

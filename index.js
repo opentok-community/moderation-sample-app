@@ -12,14 +12,8 @@ const opentok = require('./services/opentok-api');
  * Routes
  */
 app.get('/', (req, res) => {
-  res.redirect('/viewer');
+  res.redirect('/guest');
 });
-
-app.get('/viewer', async (req, res) => {
-  opentok.getCredentials('viewer')
-    .then(credentials => res.render('pages/viewer', { credentials: JSON.stringify(credentials) }))
-    .catch(error => res.status(500).send(error));
-})
 
 app.get('/host', (req, res) => {
   opentok.getCredentials('host')
@@ -33,44 +27,9 @@ app.get('/guest', (req, res) => {
     .catch(error => res.status(500).send(error));
 });
 
-app.get('/broadcast', (req, res) => {
-  const url = req.query.url;
-  const availableAt = req.query.availableAt;
-  res.render('pages/broadcast', { broadcast: JSON.stringify({ url, availableAt }) });
-});
 
 app.get('*', (req, res) => {
-  res.redirect('/viewer');
-});
-
-/*
- * API Endpoints
- */
-app.post('/broadcast/start', (req, res) => {
-  const { streams, rtmp } = req.body;
-  opentok.startBroadcast(streams, rtmp)
-    .then(data => res.send(data))
-    .catch(error => res.status(500).send(error));
-});
-
-app.post('/broadcast/layout', (req, res) => {
-  const { streams, type } = req.body;
-  opentok.updateLayout(streams, type)
-    .then(data => res.status(200).send({}))
-    .catch(error => res.status(500).send(error));
-});
-
-app.post('/broadcast/classes', (req, res) => {
-  const { classList } = req.body;
-  opentok.updateStreamClassList(classList)
-    .then(data => res.status(200).send({}))
-    .catch(error => res.status(500).send(error));
-});
-
-app.post('/broadcast/end', (req, res) => {
-  opentok.stopBroadcast()
-    .then(data => res.send(data))
-    .catch(error => res.status(500).send(error));
+  res.redirect('/guest');
 });
 
 /*

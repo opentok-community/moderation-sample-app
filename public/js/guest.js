@@ -11,6 +11,9 @@
     showControls: false
   };
 
+  let screenShare = false;
+  let session;
+
   /**
    * Get our OpenTok API Key, Session ID, and Token from the JSON embedded
    * in the HTML.
@@ -41,6 +44,9 @@
       if (error) {
         console.log(error);
       }
+      if (stream.videoType === 'screen') {
+        screenShare = true;
+      }
     });
   };
 
@@ -63,6 +69,7 @@
       '<div class="publisher-controls-container">',
       '<div id="publishVideo" class="control video-control"></div>',
       '<div id="publishAudio" class="control audio-control"></div>',
+      '<div id="publishScreen" title="Toggle Screen-share" class="control screen-control"></div>',
       '</div>',
     ].join('\n');
     el.innerHTML = controls;
@@ -91,7 +98,9 @@
     });
 
     session.on('streamDestroyed', function (event) {
-      subscribe(session, event.stream);
+      if (event.stream.videoType === 'screen') {
+        screenShare = false;
+      }
       streams--;
       if (streams < 4) {
         document.getElementById('videoContainer').classList.remove('wrap');
@@ -106,12 +115,64 @@
       toggleMedia(publisher, this);
     });
 
+    document.getElementById('publishScreen').addEventListener('click', function () {
+      toggleScreen(this);
+    });
+
   };
+
+  let myScreenShare;
+
+  const toggleScreen = function () {
+    if (myScreenShare) {
+      stopScreenShare();
+      screenShare = false;
+    } else {
+      if (!screenShare) {
+        startScreenShare();
+        screenShare = true;
+      }
+    }
+  }
+
+  const startScreenShare = function () {
+    OT.checkScreenSharingCapability(function (response) {
+      if (!response.supported || response.extensionRegistered === false) {
+        // This browser does not support screen sharing.
+        alert("You can't do the do.");
+      } else {
+        // Screen sharing is available. Publish the screen.
+        const properties = Object.assign({ videoSource: 'screen', publishAudio: true, name: 'Host', insertMode: 'before' }, insertOptions);
+        myScreenShare = OT.initPublisher('screenPreview',
+          properties,
+          function (error) {
+            if (error) {
+              console.log(error);
+            } else {
+              session.publish(myScreenShare, function (error) {
+                if (error) {
+                  console.log(error);
+                } else {
+                  screenShare = true;
+                }
+              });
+            }
+          }
+        );
+      }
+    });
+  }
+
+  const stopScreenShare = function () {
+    myScreenShare.destroy();
+    myScreenShare = undefined;
+    screenShare = false;
+  }
 
   const init = function () {
     const credentials = getCredentials();
     const props = { connectionEventsSuppressed: true };
-    const session = OT.initSession(credentials.apiKey, credentials.sessionId, props);
+    session = OT.initSession(credentials.apiKey, credentials.sessionId, props);
     const publisher = initPublisher();
 
     session.connect(credentials.token, function (error) {

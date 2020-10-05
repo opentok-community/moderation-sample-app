@@ -39,20 +39,6 @@ body {
     width: 0;
 }
 
-.fp-player {
-    display: flex;
-    justify-content: center;
-    align-content: center;
-}
-
-.fp-ratio,
-.fp-help,
-.fp-share,
-.fp-subtitle.audio-control,
-.fp-context-menu {
-    display: none !important;
-}
-
 .video-container .OT_publisher,
 .video-container .OT_subscriber {
     position: relative;
@@ -125,6 +111,14 @@ body {
 
 .publisher-controls-container .audio-control.disabled {
     background-image: url('../images/muted-mic.png');
+}
+
+.publisher-controls-container .screen-control {
+    background-image: url('../images/video.png');
+}
+
+.publisher-controls-container .screen-control.disabled {
+    background-image: url('../images/muted-video.png');
 }
 
 .banner {
