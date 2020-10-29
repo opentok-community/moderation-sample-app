@@ -1,4 +1,8 @@
 {
-  "apiKey": "YOUR_API_KEY",
-  "apiSecret": "YOUR_API_SECRET"
+  "apiKey": "46959854",
+  "apiSecret": "149c872a8cd7becb0bdda3cf7e034d44266a43b5",
+  "conferenceNumber": "12019408081",
+  "sipUsername": "7a7edfac",
+  "sipPassword": "tp9sXOiw2l7EisiD",
+  "serverUrl": "https://b4a45f545485.ngrok.io"
 }

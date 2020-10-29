@@ -7,6 +7,8 @@
   /** The state of things */
   let subscribers = [];
   let session;
+  let archiveId;
+  let sipping;
 
   /**
    * Options for adding OpenTok publisher and subscriber video elements
@@ -200,11 +202,71 @@
     setEventListeners(session, publisher);
   };
 
+  const toggleArchive = function (el) {
+    if (archiveId) {
+      stopArchive();
+      signalArchive();
+      el.innerText = 'Start Archive';
+    }
+    else {
+      startArchive();
+      signalArchive();
+      el.innerText = 'Stop Archive';
+    }
+  }
+
+  const signalArchive = function () {
+    const signalData = Object.assign({}, {
+      type: 'archive',
+      data: archiveId ? true : false
+    });
+    session.signal(signalData, function (error) {
+      if (error) {
+        console.log(['signal error (', error.code, '): ', error.message].join(''));
+      } else {
+        console.log('signal sent');
+      }
+    });
+  }
+
+  const startArchive = function () {
+    http.post('/archive/start', {})
+      .then(function (archive) {
+        archiveId = archive.id;
+        analytics.log('startArchive', 'variationSuccess');
+      }).catch(function (error) {
+        console.log(error);
+        analytics.log('startArchive', 'variationError');
+      });
+  };
+
+  const stopArchive = function () {
+    // Call the stop endpoint with archiveId
+    http.post('/archive/stop', { archiveId })
+      .then(function (archive) {
+        archiveId = null;
+        analytics.log('stopArchive', 'variationSuccess');
+      }).catch(function (error) {
+        console.log(error);
+        analytics.log('stopArchive', 'variationError');
+      });
+  }
+
   const init = function () {
     const credentials = getCredentials();
     const props = { connectionEventsSuppressed: true };
     session = OT.initSession(credentials.apiKey, credentials.sessionId, props);
     const publisher = initPublisher();
+
+    const toggle = document.getElementById('toggleArchive');
+    toggle.addEventListener('click', function () {
+      toggleArchive(this);
+    });
+
+    const sip = document.getElementById('toggleSIP');
+    sip.addEventListener('click', function () {
+      toggleSIP(this);
+    });
 
     session.connect(credentials.token, function (error) {
       if (error) {
@@ -268,6 +330,71 @@
     subscribers = subscribers.filter(f => f.subscriber.streamId !== screenShare.stream.streamId)
     screenShare.destroy();
     screenShare = undefined;
+  }
+
+  const toggleSIP = function (el) {
+    if (sipping) {
+      stopSIP();
+      el.innerText = 'Start SIP Call';
+    }
+    else {
+      startSIP();
+      el.innerText = 'Stop SIP Call';
+    }
+  }
+
+  const signalSIPStart = function () {
+    const { conferenceNumber, pinCode } = credentialData;
+    const signalData = Object.assign({}, {
+      type: 'sip',
+      data: JSON.stringify({ conferenceNumber, pinCode })
+    });
+    session.signal(signalData, function (error) {
+      if (error) {
+        console.log(['signal error (', error.code, '): ', error.message].join(''));
+      } else {
+        console.log('signal sent');
+      }
+    });
+  }
+
+  const signalSIPStop = function () {
+    const signalData = Object.assign({}, {
+      type: 'sip',
+      data: JSON.stringify({ conferenceNumber: undefined, pinCode: undefined })
+    });
+    session.signal(signalData, function (error) {
+      if (error) {
+        console.log(['signal error (', error.code, '): ', error.message].join(''));
+      } else {
+        console.log('signal sent');
+      }
+    });
+  }
+
+  const startSIP = function () {
+    http.post('/sip/start', {})
+      .then(function () {
+        sipping = true;
+        signalSIPStart();
+
+        analytics.log('startSIP', 'variationSuccess');
+      }).catch(function (error) {
+        console.log(error);
+        analytics.log('startSIP', 'variationError');
+      });
+  };
+
+  const stopSIP = function () {
+    http.post('/sip/stop', {})
+      .then(function () {
+        sipping = false;
+        signalSIPStop();
+        analytics.log('stopSIP', 'variationSuccess');
+      }).catch(function (error) {
+        console.log(error);
+        analytics.log('stopSIP', 'variationError');
+      });
   }
 
   document.addEventListener('DOMContentLoaded', init);

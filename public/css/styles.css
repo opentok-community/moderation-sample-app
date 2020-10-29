@@ -10,6 +10,7 @@ body {
     padding: 10px;
     border: 1px solid #59c9e3;
     border-radius: 6px;
+    text-align: center;
 }
 
 .main-container.player {
@@ -307,3 +308,55 @@ body {
     background-image: url('../images/muted-mic.png');
 }
 
+#toggleArchive, #toggleSIP {
+    background-color: black;
+    color: white;
+    font-weight: bold;
+    font-size: 18px;
+    border-radius: 25px;
+    padding: 10px 20px;
+    margin-top: 30px;
+    cursor: pointer;
+    border: 0px;
+}
+
+#archiveStatus {
+    background-color: green;
+    color: white;
+    font-weight: bold;
+    font-size: 18px;
+    border-radius: 25px;
+    padding: 10px 20px;
+    margin-top: 30px;
+    cursor: pointer;
+    border: 0px;
+}
+
+#archiveStatus.live {
+    background-color: red;
+    color: white;
+    font-weight: bold;
+    font-size: 18px;
+    border-radius: 25px;
+    padding: 10px 20px;
+    margin-top: 30px;
+    cursor: pointer;
+    border: 0px;
+}
+
+
+#sipStatus {
+    background-color: black;
+    color: white;
+    font-weight: bold;
+    font-size: 18px;
+    border-radius: 25px;
+    padding: 10px 20px;
+    margin-top: 30px;
+    cursor: pointer;
+    border: 0px;
+}
+
+#sipStatus.hide {
+    display: none;
+}

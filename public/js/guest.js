@@ -107,6 +107,29 @@
       }
     });
 
+    session.on('signal:archive', function (event) {
+      const status = document.getElementById('archiveStatus');
+      if (event.data) {
+        status.classList.remove('live');
+        status.innerText = 'Not Recording';
+      } else {
+        status.classList.add('live');
+        status.innerText = 'Recording';
+      }
+    });
+
+    session.on('signal:sip', function (event) {
+      const status = document.getElementById('sipStatus');
+      const { conferenceNumber, pinCode } = JSON.parse(event.data);
+      if (conferenceNumber) {
+        status.classList.remove('hide');
+        status.innerText = `Conf #: ${conferenceNumber}, PIN: ${pinCode}`;
+      } else {
+        status.classList.add('hide');
+        status.innerText = '';
+      }
+    });
+
     document.getElementById('publishVideo').addEventListener('click', function () {
       toggleMedia(publisher, this);
     });
