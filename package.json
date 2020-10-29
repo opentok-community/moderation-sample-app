@@ -9,6 +9,9 @@
     "lint": "eslint",
     "heroku-postbuild": "node heroku/postdeploy.js"
   },
+  "engines": {
+    "node": "10.16.3"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/opentok-community/moderation-sample-app.git"

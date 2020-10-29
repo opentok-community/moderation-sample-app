@@ -38,7 +38,7 @@ HTTPS is required. A web server such as [MAMP](https://www.mamp.info/) or
 [XAMPP](https://www.apachefriends.org/index.html) will work, or you can use a cloud service such
 as [Heroku](https://www.heroku.com/) to host the application.
 
-[![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy)
+[![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy?template=https://github.com/opentok-community/moderation-sample-app/tree/main)
 
 ## Development and Contributing
 
