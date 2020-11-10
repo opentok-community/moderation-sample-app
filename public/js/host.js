@@ -49,11 +49,12 @@
    * Send the broadcast status to everyone connected to the session using
    * the OpenTok signaling API
    * @param {Object} session
-   * @param {String} status
+   * @param {String} type
+   * @param {String} data
    * @param {Object} [to] - An OpenTok connection object
    */
-  const signal = function (session, status, to) {
-    const signalData = Object.assign({}, { type: 'broadcast', data: status }, to ? { to } : {});
+  const signal = function (session, type, data, to) {
+    const signalData = Object.assign({}, { type, data }, to ? { to } : {});
     session.signal(signalData, function (error) {
       if (error) {
         console.log(['signal error (', error.code, '): ', error.message].join(''));
@@ -118,9 +119,17 @@
     document.getElementById('publishScreen').addEventListener('click', function () {
       toggleScreen(this);
     });
+
+    document.getElementById('muteAll').addEventListener('click', function () {
+      muteAll();
+    });
   };
 
   const setSubscriberEventListeners = function (session, subscriber) {
+
+    document.getElementById('subscriberMute').addEventListener('click', function () {
+      muteSubscriber(subscriber, this);
+    });
 
     document.getElementById('subscriberDisconnect').addEventListener('click', function () {
       disconnectSubscriber(subscriber, this);
@@ -130,6 +139,22 @@
       unpublishSubscriber(subscriber, this);
     });
 
+  };
+
+  /**
+   * Mutes a subscriber in the session
+   * @param {Object} subscriber The OpenTok subscriber object
+   * @param {Object} el The DOM element of the control whose id corresponds to the action
+   */
+  const muteSubscriber = function (subscriber, el) {
+    signal(session, 'mute', 'muteme', subscriber.stream.connection);
+  };
+
+  /**
+   * Mutes all guests in the session
+   */
+  const muteAll = function () {
+    signal(session, 'muteAll', 'mute');
   };
 
   /**
@@ -173,6 +198,7 @@
     const el = document.createElement('div');
     const controls = [
       '<div class="subscriber-controls-container">',
+      '<div id="subscriberMute" title="Mute publisher" class="control mute-control"></div>',
       '<div id="subscriberUnpublish" title="Stop publisher" class="control video-control"></div>',
       '<div id="subscriberDisconnect" title="Force disconnect" class="control disconnect-control"></div>',
       '</div>',

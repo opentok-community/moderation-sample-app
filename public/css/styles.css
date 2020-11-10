@@ -74,7 +74,7 @@ body {
 }
 
 .publisher-controls-container {
-    height: 70px;
+    height: 100px;
     width: 36px;
     background-color: rgba(0, 0, 0, 0.4);
     z-index: 1001;
@@ -85,7 +85,7 @@ body {
     align-items: center;
     top: 20px;
     left: 20px;
-    padding: 10px 0 !important;
+    padding: 10px 5px !important;
     border-radius: 20px;
     box-sizing: border-box;
 }
@@ -276,7 +276,7 @@ body {
 
 .subscriber-controls-container {
     height: 36px;
-    width: 70px;
+    width: 100px;
     background-color: rgba(0, 0, 0, 0.4);
     z-index: 1001;
     position: absolute;
@@ -286,7 +286,7 @@ body {
     align-items: center;
     bottom: 20px;
     left: 20px;
-    padding: 10px 0 !important;
+    padding: 10px 5px !important;
     border-radius: 20px;
     box-sizing: border-box;
 }
@@ -300,6 +300,10 @@ body {
     margin-top: 3px;
 }
 
+.subscriber-controls-container .mute-control {
+    background-image: url('../images/muted-mic.png');
+}
+
 .subscriber-controls-container .video-control {
     background-image: url('../images/no-video-icon.png');
 }
@@ -308,55 +312,16 @@ body {
     background-image: url('../images/muted-mic.png');
 }
 
-#toggleArchive, #toggleSIP {
+#muteAll {
     background-color: black;
     color: white;
     font-weight: bold;
+    width: 150px;
+    font-family: Arial, Helvetica, sans-serif;
     font-size: 18px;
     border-radius: 25px;
     padding: 10px 20px;
     margin-top: 30px;
     cursor: pointer;
     border: 0px;
-}
-
-#archiveStatus {
-    background-color: green;
-    color: white;
-    font-weight: bold;
-    font-size: 18px;
-    border-radius: 25px;
-    padding: 10px 20px;
-    margin-top: 30px;
-    cursor: pointer;
-    border: 0px;
-}
-
-#archiveStatus.live {
-    background-color: red;
-    color: white;
-    font-weight: bold;
-    font-size: 18px;
-    border-radius: 25px;
-    padding: 10px 20px;
-    margin-top: 30px;
-    cursor: pointer;
-    border: 0px;
-}
-
-
-#sipStatus {
-    background-color: black;
-    color: white;
-    font-weight: bold;
-    font-size: 18px;
-    border-radius: 25px;
-    padding: 10px 20px;
-    margin-top: 30px;
-    cursor: pointer;
-    border: 0px;
-}
-
-#sipStatus.hide {
-    display: none;
 }

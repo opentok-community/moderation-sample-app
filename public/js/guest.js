@@ -13,6 +13,7 @@
 
   let screenShare = false;
   let session;
+  let publisher;
 
   /**
    * Get our OpenTok API Key, Session ID, and Token from the JSON embedded
@@ -107,6 +108,10 @@
       }
     });
 
+    session.on("signal:mute signal:muteAll", function (event) {
+      muteAudio();
+    });
+
     document.getElementById('publishVideo').addEventListener('click', function () {
       toggleMedia(publisher, this);
     });
@@ -122,6 +127,12 @@
   };
 
   let myScreenShare;
+
+  const muteAudio = () => {
+    const el = document.getElementById('publishAudio');
+    el.classList.add('disabled');
+    publisher.publishAudio(false);
+  }
 
   const toggleScreen = function () {
     if (myScreenShare) {
@@ -173,7 +184,7 @@
     const credentials = getCredentials();
     const props = { connectionEventsSuppressed: true };
     session = OT.initSession(credentials.apiKey, credentials.sessionId, props);
-    const publisher = initPublisher();
+    publisher = initPublisher();
 
     session.connect(credentials.token, function (error) {
       if (error) {
